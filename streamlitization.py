@@ -1,7 +1,25 @@
-import apization as a
+import configparser
+import tweepy
 import streamlit as st
 import tensorflow as tf
 
+#------configuration------#
+config = configparser.ConfigParser()
+config.read('config.ini')
+get = config['twitter']
+
+#------tokenization------#
+api_key = get['api_key']
+api_key_secret = get['api_key_secret']
+access_token = get['access_token']
+access_token_secret = get['access_token_secret']
+
+#------authentication------#
+auth = tweepy.OAuthHandler(api_key, api_key_secret)
+auth.set_access_token(access_token, access_token_secret)
+api = tweepy.API(auth, wait_on_rate_limit=True)
+
+#------streamlitiztion------#
 st.title('Fake Profile Detection')
 
 
@@ -11,7 +29,7 @@ try:
     if screenName == '':
         st.warning('Enter a Valid User Name')
     else:
-        user = a.api.get_user(screen_name='@'+screenName)
+        user = api.get_user(screen_name='@'+screenName)
 
         data = {
             'user_id': user.id,
